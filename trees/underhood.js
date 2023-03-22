@@ -11,10 +11,10 @@ class BinarySearchTree {
 		this.root = null;
 	}
 	insert(value) {
-		const newNode = new Node(value);
+		const NEW_NODE = new Node(value);
 
 		if (!this.root) {
-			this.root = newNode;
+			this.root = NEW_NODE;
 		} else if (this.root.value === value) {
 			// check input
 			console.log('this value already existed');
@@ -23,17 +23,17 @@ class BinarySearchTree {
 			let currentNode = this.root;
 			while (true) {
 				// true means keep looping
-				if (newNode.value > currentNode.value) {
+				if (NEW_NODE.value > currentNode.value) {
 					// right
 					if (!currentNode.right) {
-						currentNode.right = newNode;
+						currentNode.right = NEW_NODE;
 						return this;
 					}
 					currentNode = currentNode.right;
 				} else {
 					// left
 					if (!currentNode.left) {
-						currentNode.left = newNode;
+						currentNode.left = NEW_NODE;
 						return this;
 					}
 					currentNode = currentNode.left;
@@ -44,7 +44,7 @@ class BinarySearchTree {
 
 	lookup(value) {
 		if (!this.root) {
-			return "this value doesn't exist";
+			return false; // "this value doesn't exist"
 		} else {
 			let currentNode = this.root;
 			while (currentNode) {
@@ -55,11 +55,46 @@ class BinarySearchTree {
 						value > currentNode.value ? currentNode.right : currentNode.left;
 				}
 			}
-			return "this value doesn't exist";
+			return false; // "this value doesn't exist"
 		}
 	}
 
-	remove(value) {}
+	remove(value) {
+		if (!this.root) {
+			return false; // 'this tree is empty';
+		} else if (this.lookup(value) === false) {
+			return 'Cannot remove a value that is not existed';
+		} else {
+			let currentNode = this.root;
+			while (currentNode) {
+				// if found
+				if (value === currentNode.value) {
+					if (!currentNode.right) {
+						// if this is the last node, delete it
+						currentNode = null; // or delete currentNode?
+						return this;
+					} else {
+						// if this is not the last node
+						let removedNode = currentNode;
+						currentNode = currentNode.right; // set the next right Node as the new root
+						let replacedNode = currentNode;
+						while (replacedNode.left) {
+							replacedNode = replacedNode.left;
+						}
+						replacedNode.left = removedNode.left;
+						replacedNode.right = removedNode.right;
+						removedNode = replacedNode;
+						replacedNode = null;
+						return this;
+					}
+				} else {
+					// if not found, continue looping
+					currentNode =
+						value > currentNode.value ? currentNode.right : currentNode.left;
+				}
+			}
+		}
+	}
 }
 
 /* --------------
@@ -76,8 +111,11 @@ tree.insert(20);
 tree.insert(170);
 tree.insert(15);
 tree.insert(1);
+tree.remove(2);
+tree.remove(20);
+//console.log(tree.lookup(21));
+console.log(tree);
 // console.log(JSON.stringify(traverse(tree.root)));
-console.log(tree.lookup(21));
 
 function traverse(node) {
 	//recursion
